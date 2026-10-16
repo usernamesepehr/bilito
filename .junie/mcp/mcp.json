@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/usr/bin/php",
+            "args": [
+                "/home/doffy/dev/laravel/bilito/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
