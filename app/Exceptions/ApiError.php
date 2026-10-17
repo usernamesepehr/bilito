@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 final class ApiError
 {
     public static function response(
-        string $code,
+        string $errorCode,
         string $message,
         int $status,
         mixed $details = null,
@@ -15,7 +15,7 @@ final class ApiError
     ): JsonResponse {
         return response()->json([
             'error' => [
-                'code' => $code,
+                'code' => $errorCode,
                 'message' => $message,
                 'details' => $details,
             ],
