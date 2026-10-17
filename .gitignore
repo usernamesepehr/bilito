@@ -25,3 +25,10 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+# Laravel Boost / AI agents (generated)
+/AGENTS.md
+/CLAUDE.md
+/boost.json
+/.mcp.json
+/junie/
+/opencode.json
