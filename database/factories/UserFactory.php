@@ -23,6 +23,7 @@ class UserFactory extends Factory
             'lastname' => fake()->lastName(),
             'gender' => fake()->randomElement(['male', 'female']),
             'national_id' => fake()->unique()->numerify('##########'),
+            'password' => 'password',
         ];
     }
 }
