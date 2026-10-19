@@ -21,7 +21,7 @@ class AuthService
     {
         $user = $this->users->create($data);
 
-        return $this->tokens->issue($user);
+        return $this->tokens->issue($user)->withUser($user);
     }
 
     public function login(LoginData $data): TokenPair

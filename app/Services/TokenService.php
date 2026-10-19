@@ -35,6 +35,7 @@ class TokenService
             refreshToken: $plainRefresh,
             accessTokenExpiresAt: $accessTokenExpiresAt,
             refreshTokenExpiresAt: $refreshTokenExpiresAt,
+            user: $user,
         );
     }
 

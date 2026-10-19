@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Exceptions\ForbiddenException;
 use Closure;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
@@ -23,7 +24,9 @@ class EnsureUserIsAdmin
             throw new AuthenticationException('Unauthenticated.', ['sanctum']);
         }
 
-        abort_unless($user->tokenCan('is_admin'), 403);
+        if (! $user->is_admin) {
+            throw new ForbiddenException;
+        }
 
         return $next($request);
     }

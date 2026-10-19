@@ -53,20 +53,20 @@ class CookieTokenAuthTest extends TestCase
         $this->withTokenCookie($token)->getJson('/_test/me')->assertUnauthorized();
     }
 
-    public function test_admin_route_allows_token_with_is_admin_ability(): void
+    public function test_admin_route_allows_admin_user(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
-        $token = $user->createToken('api', ['is_admin'])->plainTextToken;
+        $token = $user->createToken('api')->plainTextToken;
 
         $this->withTokenCookie($token)->getJson('/_test/admin')->assertOk();
     }
 
-    public function test_admin_route_forbids_token_without_is_admin_ability(): void
+    public function test_admin_route_forbids_non_admin_user(): void
     {
         $user = User::factory()->create();
 
-        $token = $user->createToken('api', ['read'])->plainTextToken;
+        $token = $user->createToken('api')->plainTextToken;
 
         $this->withTokenCookie($token)->getJson('/_test/admin')->assertForbidden();
     }
