@@ -222,3 +222,14 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Run `vendor/bin/phpunit` to call the test runner directly. It accepts the same file path and `--filter=testName` arguments.
 
 </laravel-boost-guidelines>
+
+## Auth (AUTH-001)
+
+- Bearer auth under `/api/v1/auth`: register, login, refresh, logout, me (see `routes/api.php`).
+- Access tokens: Sanctum, 30 min (`config/sanctum.php`). Refresh tokens: 64-char plain, SHA-256 hashed in `refresh_tokens`, 30 days, rotated on `/auth/refresh`; reuse of a rotated token revokes the whole `chain_id`.
+- Layering: Controller (no logic) → FormRequest (normalizes phone/national_id) → `AuthService`/`TokenService` → repositories (only Eloquent). DTOs in `app/DataTransferObjects`.
+- Phone `09xxxxxxxxx` via `App\Support\PhoneNormalizer` (Persian/Arabic digits, `+98`/`0098` prefixes). National id checksum via `App\Support\NationalId`.
+- Errors use `{error: {code, message, details}}`; codes: `INVALID_CREDENTIALS`, `UNAUTHENTICATED`, `REFRESH_TOKEN_INVALID`, `TOO_MANY_REQUESTS`, `VALIDATION_FAILED`, `FORBIDDEN` (see `bootstrap/app.php` renderer).
+- Rate limiters (`AppServiceProvider`): login 5/min per phone+IP, register 5/min per IP, refresh 10/min per IP, api 60/min per user/IP.
+- `admin` middleware checks `users.is_admin` (boolean), not token abilities; 403 `FORBIDDEN` for non-admins.
+- Login does not reveal whether a phone exists (dummy hash check); never log passwords/tokens.
