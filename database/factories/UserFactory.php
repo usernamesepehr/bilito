@@ -23,6 +23,13 @@ class UserFactory extends Factory
             'lastname' => fake()->lastName(),
             'gender' => fake()->randomElement(['male', 'female']),
             'national_id' => fake()->unique()->numerify('##########'),
+            'password' => 'password',
+            'is_admin' => false,
         ];
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn () => ['is_admin' => true]);
     }
 }
