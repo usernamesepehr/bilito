@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('chain_id')->index();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('access_token_id')->constrained('personal_access_tokens')->cascadeOnDelete();
+            $table->foreignId('access_token_id')->nullable()->constrained('personal_access_tokens')->nullOnDelete();
             $table->string('token_hash')->unique();
             $table->timestamp('expires_at');
             $table->timestamp('revoked_at')->nullable();
