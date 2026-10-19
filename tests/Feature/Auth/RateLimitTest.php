@@ -37,4 +37,16 @@ class RateLimitTest extends TestCase
         $this->postJson('/api/v1/auth/login', ['phone' => '09121111111', 'password' => 'wrong'])
             ->assertStatus(401);
     }
+
+    public function test_login_throttle_key_shares_bucket_across_phone_spellings(): void
+    {
+        User::factory()->create(['phone' => '09120000000', 'password' => 'password123']);
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->postJson('/api/v1/auth/login', ['phone' => '09120000000', 'password' => 'wrong']);
+        }
+
+        $this->postJson('/api/v1/auth/login', ['phone' => '+989120000000', 'password' => 'wrong'])
+            ->assertStatus(429);
+    }
 }

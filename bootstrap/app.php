@@ -74,6 +74,20 @@ return Application::configure(basePath: dirname(__DIR__))
             return errorResponse('TOO_MANY_REQUESTS', 'too many requests', 429, null, $headers);
         });
 
+        $exceptions->render(function (Throwable $e, Request $request) {
+            if (! rendersJson($request) || $e instanceof ValidationException || $e instanceof AuthenticationException) {
+                return null;
+            }
+
+            if ($e instanceof HttpExceptionInterface || $e instanceof ThrottleRequestsException || $e instanceof ApiException) {
+                return null;
+            }
+
+            $status = app()->isProduction() ? 500 : ($e->getCode() >= 400 && $e->getCode() < 600 ? $e->getCode() : 500);
+
+            return errorResponse('SERVER_ERROR', 'server error', $status);
+        });
+
         $exceptions->render(function (ApiException $e, Request $request) {
             if (! rendersJson($request)) {
                 return null;

@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['phone', 'firstname', 'lastname', 'gender', 'national_id', 'password', 'is_admin'])]
+#[Fillable(['phone', 'firstname', 'lastname', 'gender', 'national_id', 'password'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */

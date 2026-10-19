@@ -9,9 +9,9 @@ interface RefreshTokenRepositoryInterface
 {
     public function findByPlainToken(string $plain): ?RefreshToken;
 
-    public function findByAccessTokenId(int $accessTokenId): ?RefreshToken;
-
     public function create(RefreshTokenData $data): RefreshToken;
+
+    public function claim(RefreshToken $token): bool;
 
     public function revoke(RefreshToken $token): void;
 

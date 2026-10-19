@@ -64,6 +64,21 @@ class AuthServiceTest extends TestCase
         $this->assertNotEmpty($pair->refreshToken);
     }
 
+    public function test_is_admin_is_not_mass_assignable(): void
+    {
+        $user = User::create([
+            'phone' => '09120000001',
+            'firstname' => 'Ali',
+            'lastname' => 'Rezaei',
+            'gender' => 'male',
+            'national_id' => '0079926411',
+            'password' => 'password123',
+            'is_admin' => true,
+        ]);
+
+        $this->assertFalse($user->fresh()->is_admin);
+    }
+
     public function test_register_creates_user_and_issues_pair(): void
     {
         $data = new RegisterData('09120000000', 'Ali', 'Rezaei', 'male', '0468534474', 'password123');

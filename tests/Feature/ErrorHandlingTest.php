@@ -24,6 +24,7 @@ class ErrorHandlingTest extends TestCase
         Route::get('/_test/invalid-credentials', fn () => throw new InvalidCredentialsException)->name('ic');
         Route::get('/_test/forbidden', fn () => throw new ForbiddenException)->name('fb');
         Route::get('/_test/forbidden-http', fn () => abort(403));
+        Route::get('/_test/unhandled', fn () => throw new \RuntimeException('boom'));
     }
 
     public function test_validation_errors_use_standard_shape(): void
@@ -67,5 +68,14 @@ class ErrorHandlingTest extends TestCase
         $this->getJson('/_test/forbidden')
             ->assertStatus(403)
             ->assertJsonPath('error.code', 'FORBIDDEN');
+    }
+
+    public function test_unhandled_exception_returns_server_error_shape(): void
+    {
+        $response = $this->getJson('/_test/unhandled');
+
+        $response->assertStatus(500)->assertJsonPath('error.code', 'SERVER_ERROR');
+
+        $this->assertStringNotContainsString('boom', $response->getContent());
     }
 }

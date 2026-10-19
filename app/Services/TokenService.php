@@ -17,7 +17,7 @@ class TokenService
 
     public function issue(User $user, ?string $chainId = null): TokenPair
     {
-        $accessTokenExpiresAt = now()->addMinutes(30);
+        $accessTokenExpiresAt = now()->addMinutes(config('sanctum.expiration', 30));
         $refreshTokenExpiresAt = now()->addDays(self::REFRESH_TTL_DAYS);
 
         $pair = $user->createToken(name: 'auth', expiresAt: $accessTokenExpiresAt);
@@ -47,7 +47,7 @@ class TokenService
             throw new RefreshTokenInvalidException;
         }
 
-        if ($token->revoked_at !== null) {
+        if ($token->revoked_at !== null || ! $this->refreshTokens->claim($token)) {
             $this->refreshTokens->revokeChain($token->chain_id);
 
             throw new RefreshTokenInvalidException;
@@ -58,21 +58,11 @@ class TokenService
         }
 
         $user = $token->user;
-        $this->refreshTokens->revoke($token);
         $token->accessToken()->first()?->delete();
         $token->access_token_id = null;
         $token->save();
 
         return $this->issue($user, $token->chain_id);
-    }
-
-    public function revokeByRefresh(string $plainRefreshToken): void
-    {
-        $token = $this->refreshTokens->findByPlainToken($plainRefreshToken);
-
-        if ($token) {
-            $this->refreshTokens->revoke($token);
-        }
     }
 
     public function revokeForAccess(int $accessTokenId): void

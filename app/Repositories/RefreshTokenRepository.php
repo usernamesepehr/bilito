@@ -18,11 +18,6 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
         return RefreshToken::query()->where('token_hash', self::hash($plain))->first();
     }
 
-    public function findByAccessTokenId(int $accessTokenId): ?RefreshToken
-    {
-        return RefreshToken::query()->where('access_token_id', $accessTokenId)->first();
-    }
-
     public function create(RefreshTokenData $data): RefreshToken
     {
         return RefreshToken::query()->create([
@@ -32,6 +27,20 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
             'token_hash' => self::hash($data->plainToken),
             'expires_at' => now()->addDays(30),
         ]);
+    }
+
+    public function claim(RefreshToken $token): bool
+    {
+        $claimed = RefreshToken::query()
+            ->where('id', $token->id)
+            ->whereNull('revoked_at')
+            ->update(['revoked_at' => now()]);
+
+        if ($claimed > 0) {
+            $token->revoked_at = now();
+        }
+
+        return $claimed > 0;
     }
 
     public function revoke(RefreshToken $token): void

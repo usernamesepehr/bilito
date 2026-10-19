@@ -30,6 +30,6 @@ class UserFactory extends Factory
 
     public function admin(): static
     {
-        return $this->state(fn () => ['is_admin' => true]);
+        return $this->state(fn () => ['is_admin' => true])->afterMaking(fn (User $user) => $user->forceFill(['is_admin' => true]));
     }
 }

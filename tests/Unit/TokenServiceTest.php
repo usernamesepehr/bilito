@@ -97,14 +97,4 @@ class TokenServiceTest extends TestCase
         $this->expectException(RefreshTokenInvalidException::class);
         $this->service->rotate($pair->refreshToken);
     }
-
-    public function test_revoke_by_refresh_revokes_pair(): void
-    {
-        $user = User::factory()->create();
-        $pair = $this->service->issue($user);
-
-        $this->service->revokeByRefresh($pair->refreshToken);
-
-        $this->assertNotNull(RefreshToken::where('token_hash', hash('sha256', $pair->refreshToken))->first()->revoked_at);
-    }
 }
